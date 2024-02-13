@@ -40,16 +40,27 @@ const GeminiPrompt: React.FC<GeminiPromptProps> = ({ options }) => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (checkedOptions.length === 0) {
-      alert("Please select at least one ingredient.");
-      return;
-    }
+    // if (checkedOptions.length === 0) {
+    //   alert("Please select at least one ingredient.");
+    //   return;
+    // }
 
     setIsLoading(true);
 
     try {
-      const response = await generateGeminiText(userPrompt); // Make sure you send userPrompt here too
-      setGeminiResponse(response.text);
+      if (checkedOptions.length === 0) {
+        const response =
+          await generateGeminiText(`Format this in markdown. Make the ingredients, instructions, and tips labels bold. 
+        Give the recipe a name at the beginning. 
+        Make the name large and bold.
+        Add a time estimate for the recipe.
+        List the steps in a numbered list.    
+        Give me an interesting dinner recipe.`);
+        setGeminiResponse(response.text);
+      } else {
+        const response = await generateGeminiText(userPrompt); // Make sure you send userPrompt here too
+        setGeminiResponse(response.text);
+      }
     } catch (error) {
       console.error("Error getting Gemini response:", error);
       // Handle error gracefully
@@ -96,7 +107,11 @@ const GeminiPrompt: React.FC<GeminiPromptProps> = ({ options }) => {
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           disabled={isLoading}
         >
-          {isLoading ? "Thinking..." : "Create Recipe!"}
+          {isLoading
+            ? "Thinking..."
+            : checkedOptions.length > 0
+            ? "Generate Recipe!"
+            : "Surprise me!"}
         </button>
       </form>
 
