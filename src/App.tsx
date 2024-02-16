@@ -1,4 +1,5 @@
 import GeminiText from "./components/GeminiText";
+import RecipeDisplay from "./components/RecipeDisplay";
 import "./index.css";
 
 function App() {
@@ -17,9 +18,9 @@ function App() {
   ];
 
   return (
-    <>
+    <div className="bg-gray-600">
       <GeminiText options={options} />
-    </>
+    </div>
   );
 }
 

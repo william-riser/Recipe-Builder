@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
-import { generateGeminiText } from "./Gemini.tsx"; // Modify the path accordingly
+import { generateGeminiText } from "./Gemini.tsx";
 
 interface Option {
   label: string;
@@ -8,7 +8,7 @@ interface Option {
 }
 
 interface GeminiPromptProps {
-  options: Option[]; // Our prop for the list of options
+  options: Option[];
 }
 
 const GeminiPrompt: React.FC<GeminiPromptProps> = ({ options }) => {
@@ -17,12 +17,20 @@ const GeminiPrompt: React.FC<GeminiPromptProps> = ({ options }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [checkedOptions, setCheckedOptions] = useState([]);
 
-  const defaultPrompt = `Format this in markdown. Make the ingredients, instructions, and tips labels bold. 
+  // Prompt for when ingredients are selected
+  const defaultPrompt = `Format this in JSON. 
+    Add a time estimate for the recipe.
+    Add a cusisine type for the recipe.
+    Give me a recipe that contains: `;
+
+
+  // Prompt for when no ingredients are selected
+  const suprisePrompt = `Format this in markdown. Make the ingredients, instructions, and tips labels bold. 
     Give the recipe a name at the beginning. 
     Make the name large and bold.
     Add a time estimate for the recipe.
     List the steps in a numbered list.    
-    Give me a recipe that contains: `;
+    Give me an interesting dinner recipe.`;
 
   const handleCheckboxChange = (event) => {
     const value = event.target.value;
@@ -49,13 +57,7 @@ const GeminiPrompt: React.FC<GeminiPromptProps> = ({ options }) => {
 
     try {
       if (checkedOptions.length === 0) {
-        const response =
-          await generateGeminiText(`Format this in markdown. Make the ingredients, instructions, and tips labels bold. 
-        Give the recipe a name at the beginning. 
-        Make the name large and bold.
-        Add a time estimate for the recipe.
-        List the steps in a numbered list.    
-        Give me an interesting dinner recipe.`);
+        const response = await generateGeminiText("Give me an interesting recipe");
         setGeminiResponse(response.text);
       } else {
         const response = await generateGeminiText(userPrompt); // Make sure you send userPrompt here too
@@ -117,7 +119,7 @@ const GeminiPrompt: React.FC<GeminiPromptProps> = ({ options }) => {
 
       {geminiResponse && (
         <div className="mt-4 p-4 border border-gray-200 rounded bg-white">
-          <ReactMarkdown>{geminiResponse}</ReactMarkdown>
+          {<ReactMarkdown>{geminiResponse}</ReactMarkdown>}
         </div>
       )}
     </div>
